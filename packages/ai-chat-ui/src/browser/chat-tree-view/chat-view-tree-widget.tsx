@@ -731,6 +731,7 @@ interface WidgetContainerProps {
 
 const WidgetContainer: React.FC<WidgetContainerProps> = ({ widget }) => (
     <div ref={node => {
+        if (!node) { return; }
         Widget.attach(widget, node);
         return () => {
             widget.clearFlag(Widget.Flag.IsAttached);
@@ -897,7 +898,8 @@ const HoverableLabel = (
         hoverService: HoverService,
         className: string
     }) => {
-    const spanRef = React.createRef<HTMLSpanElement>();
+    // eslint-disable-next-line no-null/no-null
+    const spanRef = React.useRef<HTMLSpanElement>(null);
     return (
         <span
             className={className}

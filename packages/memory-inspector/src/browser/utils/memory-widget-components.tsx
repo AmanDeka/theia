@@ -144,7 +144,8 @@ export interface MoreMemoryProps {
 
 export const MWMoreMemorySelect: React.FC<MoreMemoryProps> = ({ options, handler, direction }) => {
     const [numBytes, setNumBytes] = React.useState<number>(options[0]);
-    const containerRef = React.createRef<HTMLDivElement>();
+    // eslint-disable-next-line no-null/no-null
+    const containerRef = React.useRef<HTMLDivElement>(null);
     const onSelectChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
         e.stopPropagation();
         const { value } = e.currentTarget;
