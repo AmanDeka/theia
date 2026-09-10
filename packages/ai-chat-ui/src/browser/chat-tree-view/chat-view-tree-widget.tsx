@@ -729,28 +729,15 @@ interface WidgetContainerProps {
     widget: ReactWidget;
 }
 
-const WidgetContainer: React.FC<WidgetContainerProps> = ({ widget }) => {
-    // eslint-disable-next-line no-null/no-null
-    const containerRef = React.useRef<HTMLDivElement | null>(null);
-
-    React.useEffect(() => {
-        if (containerRef.current && !widget.isAttached) {
-            Widget.attach(widget, containerRef.current);
-        }
-    }, [containerRef.current]);
-
-    // Clean up
-    React.useEffect(() =>
-        () => {
-            setTimeout(() => {
-                // Delay clean up to allow react to finish its rendering cycle
-                widget.clearFlag(Widget.Flag.IsAttached);
-                widget.dispose();
-            });
-        }, []);
-
-    return <div ref={containerRef} />;
-};
+const WidgetContainer: React.FC<WidgetContainerProps> = ({ widget }) => (
+    <div ref={node => {
+        Widget.attach(widget, node);
+        return () => {
+            widget.clearFlag(Widget.Flag.IsAttached);
+            widget.dispose();
+        };
+    }} />
+);
 
 export const ChatRequestRender = (
     {
