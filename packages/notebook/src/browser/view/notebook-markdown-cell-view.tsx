@@ -173,7 +173,7 @@ function MarkdownCell({
     }
 
     return editMode ?
-        (<div className='theia-notebook-markdown-editor-container' key="code" ref={ref => observeCellHeight(ref, cell)}>
+        (<div className='theia-notebook-markdown-editor-container' key="code" ref={ref => ref ? observeCellHeight(ref, cell) : undefined}>
             <CellEditor notebookModel={notebookModel} cell={cell}
                 notebookViewModel={notebookViewModel}
                 monacoServices={monacoServices}
@@ -189,8 +189,9 @@ function MarkdownCell({
         (<div className='theia-notebook-markdown-content' key="markdown"
             onDoubleClick={() => notebookViewModel.cellViewModels.get(cell.handle)?.requestEdit()}
             ref={node => {
-                node?.replaceChildren(...markdownContent);
-                observeCellHeight(node, cell);
+                if (!node) { return; }
+                node.replaceChildren(...markdownContent);
+                return observeCellHeight(node, cell);
             }}
         />);
 }

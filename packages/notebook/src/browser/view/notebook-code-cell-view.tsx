@@ -88,7 +88,7 @@ export class NotebookCodeCellRenderer implements CellRenderer {
     protected readonly notebookViewModel: NotebookViewModel;
 
     render(notebookModel: NotebookModel, cell: NotebookCellModel, handle: number): React.ReactNode {
-        return <div className='theia-notebook-cell-with-sidebar' ref={ref => observeCellHeight(ref, cell)}>
+        return <div className='theia-notebook-cell-with-sidebar' ref={ref => ref ? observeCellHeight(ref, cell) : undefined}>
             <div className='theia-notebook-cell-editor-container'>
                 <CellEditor notebookModel={notebookModel} cell={cell}
                     notebookViewModel={this.notebookViewModel}

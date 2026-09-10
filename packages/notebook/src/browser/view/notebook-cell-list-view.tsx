@@ -31,13 +31,13 @@ export interface CellRenderer {
     renderDragImage(cell: NotebookCellModel): HTMLElement
 }
 
-export function observeCellHeight(ref: HTMLDivElement | null, cell: NotebookCellModel): void {
-    if (ref) {
-        cell.cellHeight = ref?.getBoundingClientRect().height ?? 0;
-        new ResizeObserver(entries =>
-            cell.cellHeight = ref?.getBoundingClientRect().height ?? 0
-        ).observe(ref);
-    }
+export function observeCellHeight(ref: HTMLDivElement, cell: NotebookCellModel): () => void {
+    cell.cellHeight = ref.getBoundingClientRect().height ?? 0;
+    const observer = new ResizeObserver(() => {
+        cell.cellHeight = ref.getBoundingClientRect().height ?? 0;
+    });
+    observer.observe(ref);
+    return () => observer.disconnect();
 }
 
 interface CellListProps {
