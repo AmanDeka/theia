@@ -1987,14 +1987,9 @@ const ChatInput: React.FunctionComponent<ChatInputProperties> = (props: ChatInpu
 
     // Set up paste handler on the container div
     React.useEffect(() => {
-        const container = containerRef.current;
-        if (container) {
-            container.addEventListener('paste', handlePaste, true);
-            return () => {
-                container.removeEventListener('paste', handlePaste, true);
-            };
-        }
-        return undefined;
+        const container = containerRef.current!;
+        container.addEventListener('paste', handlePaste, true);
+        return () => container.removeEventListener('paste', handlePaste, true);
     }, [handlePaste]);
 
     React.useEffect(() => {
@@ -2037,13 +2032,18 @@ const ChatInput: React.FunctionComponent<ChatInputProperties> = (props: ChatInpu
             });
 
             if (editorContainerRef.current) {
-                editorContainerRef.current.style.overflowY = 'auto'; // ensure vertical scrollbar
-                editorContainerRef.current.style.height = (lineHeight + (2 * paddingTop)) + 'px';
+                const editorContainer = editorContainerRef.current;
+                editorContainer.style.overflowY = 'auto'; // ensure vertical scrollbar
+                editorContainer.style.height = (lineHeight + (2 * paddingTop)) + 'px';
 
-                editorContainerRef.current.addEventListener('wheel', e => {
+                const wheelHandler = (e: WheelEvent) => {
                     // Prevent parent from scrolling
                     e.stopPropagation();
-                }, { passive: false });
+                };
+                editorContainer.addEventListener('wheel', wheelHandler, { passive: false });
+                editor.getControl().onDidDispose(() => {
+                    editorContainer.removeEventListener('wheel', wheelHandler);
+                });
             }
 
             const updateEditorHeight = () => {
